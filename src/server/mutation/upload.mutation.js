@@ -1,8 +1,5 @@
 import {
-  GraphQLFloat,
-  GraphQLInt,
   GraphQLString,
-  GraphQLNonNull
 } from 'graphql';
 import {
   mutationWithClientMutationId
@@ -13,6 +10,8 @@ import {
   defaultSchema,
   refs
 } from '../util/firebase.util';
+
+import s3Util from '../util/s3.util';
 
 const userUploadProfileImageMutation = {
   name: 'userUpdateProfileImage',
@@ -26,6 +25,11 @@ const userUploadProfileImageMutation = {
       if (user) {
         if (file) {
           console.log('upload file to s3 & firebase here.');
+          return s3Util.uplaoadImageToProfileImage(user.id, file)
+              .then((url) => {
+                resolve(url);
+              })
+              .catch(reject);
         }
         return reject('invalid or no file.');
       }
@@ -113,7 +117,6 @@ const uploadNodeItemImageMutation = {
     });
   }
 };
-
 
 
 const UploadMutation = {
